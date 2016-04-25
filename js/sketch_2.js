@@ -3,9 +3,17 @@ var images = [];
 var hhheight = 0; 
 var offset; 
 var mouseMotion = false;
+var logo; 
+var logoWidth = 0;
+var logoHeight = 0;
+
 
 var rep = 5; 
 var cellSize = 50; 
+
+var preload = function(){
+	logo = loadImage("./assets/supertranspositions_3.svg");
+};
 
 var setup = function(){
 	var c = createCanvas(windowWidth, windowHeight);
@@ -14,32 +22,30 @@ var setup = function(){
 	ctx = canvas.getContext("2d");
 	pixelDensity(1); 
 
-	hhheight = windowWidth/15; 
-	rep = floor(windowHeight/hhheight)-1; 
-	offset = (windowHeight/2) - (hhheight*rep)/2;
+	logoWidth = width*0.9;
+	logoHeight = (width*0.9)*0.073529412;
+	margin = (width-logoWidth)/2;
+
+
+	rep = floor(height/logoHeight)-1; 
+	offset = (height/2)-(logoHeight*rep)/2;
+
 	textMap = renderMap();
 	image(textMap, 0, 0);
-}
+};
 
 var renderMap = function(){
-	
+	var g = createGraphics(width, logoHeight+3);
+	g.background(0);
+	g.image(logo, margin, 0, logoWidth, logoHeight);
 
-	var g = createGraphics(windowWidth, hhheight);
-	g.textSize(hhheight);
-	g.textAlign(CENTER);
-	g.fill("#F00");
-	g.text("SUPERTRANSPOSITIONS", windowWidth/2+3, hhheight-5);
-	g.fill("#0FF");
-	g.text("SUPERTRANSPOSITIONS", windowWidth/2-2, hhheight-5+2);
-	g.fill("#FFF");
-	g.text("SUPERTRANSPOSITIONS", windowWidth/2, hhheight-5);
-
-	var fullG = createGraphics(windowWidth, windowHeight);
+	var fullG = createGraphics(width, height);
 	for(var i=0; i<rep; i++){
-		fullG.image(g, 0, i*hhheight+offset, windowWidth, hhheight);	
+		console.log("image"+i, i*logoHeight+offset);
+		fullG.image(g, 0, i*logoHeight+offset, width, logoHeight);	
 	}
 	return fullG;
-}
+};
 
 var draw = function(){
 	clear();
@@ -51,13 +57,25 @@ var draw = function(){
 	ctx.clearRect(x, y, cellSize, cellSize);
 
 	var block = textMap.get(x, y, cellSize, cellSize);
-
 	push();
 	translate(x, y);
 	rotate( radians(90) );
 	image(block, 0, -cellSize);
 	pop();
 
+	for(var count=0; count<random(2); count++){
+		x = int(random(0,width)/cellSize)*cellSize; 
+		y = int(random(0,height)/cellSize)*cellSize; 
+
+		block = textMap.get(x, y, cellSize, cellSize);
+		push();
+		translate(x, y);
+		rotate( radians(90) );
+		image(block, 0, -cellSize);
+		pop();
+
+	}
+
 	textMap = get(0, 0, windowWidth, windowHeight);
-}
+};
 
